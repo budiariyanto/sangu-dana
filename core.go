@@ -77,7 +77,7 @@ func (gateway *CoreGateway) Order(reqBody RequestBody) (res OrderResponse, err e
 	}
 
 	//response RSA verification
-	err = VerifyResponse(res.Response, res.Signature, gateway.Client.PublicKey, TYPE_ORDER)
+	err = VerifySignature(res.Response, res.Signature, gateway.Client.PublicKey, TYPE_ORDER)
 	if err != nil {
 		err = fmt.Errorf("could not verify request: %v", err)
 	}

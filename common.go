@@ -59,7 +59,7 @@ func parsePrivateKey(pemBytes []byte) (Signer, error) {
 	return newSignerFromKey(rawkey)
 }
 
-func VerifyResponse(resp interface{}, sig string, publicKey []byte, typeResponse string) error {
+func VerifySignature(data interface{}, sig string, publicKey []byte, typeResponse string) error {
 	parser, perr := parsePublicKey(publicKey)
 	if perr != nil {
 		log.Printf("could load public key: %v", perr)
@@ -68,9 +68,9 @@ func VerifyResponse(resp interface{}, sig string, publicKey []byte, typeResponse
 	ok := false
 	switch typeResponse {
 	case TYPE_ORDER:
-		resp, ok = resp.(Response)
+		data, ok = data.(Response)
 	case TYPE_PAY_NOTIFY:
-		resp, ok = resp.(ResponsePayFinish)
+		data, ok = data.(RequestPayFinish)
 	default:
 		return errors.New("type response not set")
 	}
@@ -79,9 +79,9 @@ func VerifyResponse(resp interface{}, sig string, publicKey []byte, typeResponse
 		return errors.New("cast interface to concrete type fail")
 	}
 
-	respByte, _ := json.Marshal(resp)
+	dataByte, _ := json.Marshal(data)
 	ds, _ := base64.StdEncoding.DecodeString(sig)
-	return parser.Unsign(respByte, ds)
+	return parser.Unsign(dataByte, ds)
 }
 
 // parsePublicKey parses a PEM encoded private key.

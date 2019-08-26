@@ -2,9 +2,10 @@
 
 ## Usage blueprint
 
-1. There is a type named `Client` (`linkaja.Client`) that should be instantiated through `NewClient` which hold any possible setting to the library.
+1. There is a type named `Client` (`dana.Client`) that should be instantiated through `NewClient` which hold any possible setting to the library.
 2. There is a gateway classes which you will be using depending on whether you used. The gateway type need a Client instance.
-3. Any activity (public token request) is done in the gateway level.
+3. All Header field is handled by this library
+4. There's also VerifySignature to verify whether the signature response/request is valid.
 
 ## Example
 
@@ -20,7 +21,7 @@
 
     body := &dana.RequestBody{
         Order: {},
-        MerchantId: "216620000000296294081",
+        MerchantId: "MERCHANT_ID",
         ---
         ---
         ---
