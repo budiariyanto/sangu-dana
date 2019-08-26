@@ -17,6 +17,8 @@ type Client struct {
 	Function     string
 	ClientId     string
 	ClientSecret string
+	PrivateKey   []byte
+	PublicKey    []byte
 	LogLevel     int
 	Logger       *log.Logger
 }
