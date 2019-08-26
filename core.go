@@ -42,9 +42,9 @@ func (gateway *CoreGateway) Order(reqBody RequestBody) (res OrderResponse, err e
 	head := RequestHeader{}
 	head.Version = gateway.Client.Version
 	head.Function = gateway.Client.Function
-	head.ClientId = gateway.Client.ClientId
+	head.ClientID = gateway.Client.ClientId
 	head.ReqTime = now.Format(DANA_TIME_LAYOUT)
-	head.ReqMsgId = uuid.Must(uuid.NewV4()).String()
+	head.ReqMsgID = uuid.Must(uuid.NewV4()).String()
 	head.ClientSecret = gateway.Client.ClientSecret
 
 	req := Request{
