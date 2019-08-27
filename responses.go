@@ -12,21 +12,35 @@ type Response struct {
 type ResponseHeader struct {
 	Version   string `json:"version" valid:"required"`
 	Function  string `json:"function" valid:"required"`
-	ClientId  string `json:"clientId" valid:"required"`
+	ClientID  string `json:"clientId" valid:"required"`
 	RespTime  string `json:"respTime" valid:"required"`
-	RespMsgId string `json:"reqMsgId" valid:"required"`
+	RespMsgID string `json:"reqMsgId" valid:"required"`
 }
 
 type ResponseBody struct {
-	MerchantTransId string     `json:"merchantTransId" valid:"optional"`
-	AcquirementId   string     `json:"acquirementId" valid:"optional"`
-	CheckoutUrl     string     `json:"checkoutUrl" valid:"optional"`
+	MerchantTransID string     `json:"merchantTransId" valid:"optional"`
+	AcquirementID   string     `json:"acquirementId" valid:"optional"`
+	CheckoutURL     string     `json:"checkoutUrl" valid:"optional"`
 	ResultInfo      ResultInfo `json:"resultInfo" valid:"required"`
 }
 
 type ResultInfo struct {
 	ResultStatus string `json:"resultStatus" valid:"optional"`
-	ResultCodeId string `json:"resultCodeId" valid:"optional"`
+	ResultCodeID string `json:"resultCodeId" valid:"optional"`
 	ResultMsg    string `json:"resultMsg" valid:"optional"`
 	ResultCode   string `json:"resultCode" valid:"optional"`
+}
+
+type PayFinishResponse struct {
+	Response  ResponsePayFinish `json:"response"`
+	Signature string            `json:"signature"`
+}
+
+type ResponsePayFinish struct {
+	Head ResponseHeader        `json:"head"`
+	Body ResponseBodyPayFinish `json:"body"`
+}
+
+type ResponseBodyPayFinish struct {
+	ResultInfo ResultInfo `json:"resultInfo"`
 }

@@ -13,9 +13,9 @@ type Request struct {
 type RequestHeader struct {
 	Version      string `json:"version" valid:"required"`
 	Function     string `json:"function" valid:"required"`
-	ClientId     string `json:"clientId" valid:"required"`
+	ClientID     string `json:"clientId" valid:"required"`
 	ReqTime      string `json:"reqTime" valid:"required"`
-	ReqMsgId     string `json:"reqMsgId" valid:"required"`
+	ReqMsgID     string `json:"reqMsgId" valid:"required"`
 	ClientSecret string `json:"clientSecret" valid:"required"`
 	AccessToken  string `json:"accessToken" valid:"optional"`
 	Reserve      string `json:"reserve" valid:"optional"`
@@ -23,7 +23,7 @@ type RequestHeader struct {
 
 type RequestBody struct {
 	Order             Order             `json:"order" valid:"required"`
-	MerchantId        string            `json:"merchantId" valid:"required"`
+	MerchantID        string            `json:"merchantId" valid:"required"`
 	Mcc               string            `json:"mcc" valid:"optional"`
 	ProductCode       string            `json:"productCode" valid:"required"`
 	EnvInfo           EnvInfo           `json:"envInfo" valid:"required"`
@@ -35,7 +35,7 @@ type RequestBody struct {
 type Order struct {
 	OrderTitle        string         `json:"orderTitle"`
 	OrderAmount       Amount         `json:"orderAmount"`
-	MerchantTransId   string         `json:"merchantTransId"`
+	MerchantTransID   string         `json:"merchantTransId"`
 	MerchantTransType string         `json:"merchantTransType"`
 	OrderMemo         string         `json:"orderMemo"`
 	CreatedTime       string         `json:"createdTime"`
@@ -50,19 +50,19 @@ type Amount struct {
 }
 
 type Good struct {
-	MerchantGoodsId    string `json:"merchantGoodsId"`
+	MerchantGoodsID    string `json:"merchantGoodsId"`
 	Description        string `json:"description"`
 	Category           string `json:"category"`
 	Price              Amount `json:"price"`
 	Unit               string `json:"unit"`
 	Quantity           string `json:"quantity"`
-	MerchantShippingId string `json:"merchantShippingId"`
-	SnapshotUrl        string `json:"snapshotUrl"`
+	MerchantShippingID string `json:"merchantShippingId"`
+	SnapshotURL        string `json:"snapshotUrl"`
 	ExtendInfo         string `json:"extendInfo"`
 }
 
 type ShippingInfo struct {
-	MerchantShippingId string `json:"merchantShippingId"`
+	MerchantShippingID string `json:"merchantShippingId"`
 	TrackingNo         string `json:"trackingNo"`
 	Carrier            string `json:"carrier"`
 	ChargeAmount       Amount `json:"chargeAmount"`
@@ -82,10 +82,10 @@ type ShippingInfo struct {
 }
 
 type EnvInfo struct {
-	SessionId          string `json:"sessionId"`
-	TokenId            string `json:"tokenId"`
+	SessionID          string `json:"sessionId"`
+	TokenID            string `json:"tokenId"`
 	WebsiteLanguage    string `json:"websiteLanguage"`
-	ClientIp           string `json:"clientIp"`
+	ClientIP           string `json:"clientIp"`
 	OsType             string `json:"osType"`
 	AppVersion         string `json:"appVersion"`
 	SdkVersion         string `json:"sdkVersion"`
@@ -99,10 +99,30 @@ type EnvInfo struct {
 }
 
 type NotificationUrl struct {
-	Url  string `json:"url"`
+	URL  string `json:"url"`
 	Type string `json:"type"`
 }
 
 type PaymentPreference struct {
 	DisabledPayMethods string `json:"disabledPayMethods"`
+}
+
+type PayFinishRequest struct {
+	Request   RequestPayFinish `json:"request"`
+	Signature string           `json:"signature"`
+}
+type RequestPayFinish struct {
+	Head RequestHeader        `json:"head"`
+	Body RequestBodyPayFinish `json:"body"`
+}
+
+type RequestBodyPayFinish struct {
+	AcquirementID     string `json:"acquirementId"`
+	MerchantTransID   string `json:"merchantTransId"`
+	FinishedTime      string `json:"finishedTime"`
+	CreatedTime       string `json:"createdTime"`
+	MerchantID        string `json:"merchantId"`
+	OrderAmount       Amount `json:"orderAmount"`
+	AcquirementStatus string `json:"acquirementStatus"`
+	ExtendInfo        string `json:"extendInfo"`
 }

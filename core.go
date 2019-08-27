@@ -2,14 +2,14 @@ package dana
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	uuid "github.com/satori/go.uuid"
 	"io"
 	"log"
 	"strings"
 	"time"
+
+	uuid "github.com/satori/go.uuid"
 )
 
 const (
@@ -42,9 +42,9 @@ func (gateway *CoreGateway) Order(reqBody RequestBody) (res OrderResponse, err e
 	head := RequestHeader{}
 	head.Version = gateway.Client.Version
 	head.Function = gateway.Client.Function
-	head.ClientId = gateway.Client.ClientId
+	head.ClientID = gateway.Client.ClientId
 	head.ReqTime = now.Format(DANA_TIME_LAYOUT)
-	head.ReqMsgId = uuid.Must(uuid.NewV4()).String()
+	head.ReqMsgID = uuid.Must(uuid.NewV4()).String()
 	head.ClientSecret = gateway.Client.ClientSecret
 
 	req := Request{
@@ -52,7 +52,7 @@ func (gateway *CoreGateway) Order(reqBody RequestBody) (res OrderResponse, err e
 		Body: reqBody,
 	}
 
-	sig, err := generateSignature(req)
+	sig, err := generateSignature(req, gateway.Client.PrivateKey)
 	if err != nil {
 		err = fmt.Errorf("failed to generate signature: %v", err)
 		return
@@ -77,19 +77,9 @@ func (gateway *CoreGateway) Order(reqBody RequestBody) (res OrderResponse, err e
 	}
 
 	//response RSA verification
-	err = verifyResponse(res.Response, res.Signature)
+	err = VerifySignature(res.Response, res.Signature, gateway.Client.PublicKey, TYPE_ORDER)
 	if err != nil {
-		log.Printf("could not unsign request: %v", err)
+		err = fmt.Errorf("could not verify request: %v", err)
 	}
 	return
-}
-
-func verifyResponse(res Response, sig string) error {
-	parser, perr := loadPublicKey()
-	if perr != nil {
-		log.Printf("could load public key: %v", perr)
-	}
-	resp, _ := json.Marshal(res)
-	ds, _ := base64.StdEncoding.DecodeString(sig)
-	return parser.Unsign(resp, ds)
 }
