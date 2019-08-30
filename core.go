@@ -36,7 +36,7 @@ func (gateway *CoreGateway) Call(method, path string, header map[string]string, 
 	return gateway.Client.Call(method, path, header, body, v)
 }
 
-func (gateway *CoreGateway) Order(reqBody RequestBody) (res OrderResponse, err error) {
+func (gateway *CoreGateway) Order(reqBody *RequestBody) (res OrderResponse, err error) {
 	now := time.Now()
 
 	head := RequestHeader{}

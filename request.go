@@ -7,7 +7,7 @@ type OrderRequest struct {
 
 type Request struct {
 	Head RequestHeader `json:"head" valid:"required"`
-	Body RequestBody   `json:"body" valid:"required"`
+	Body *RequestBody  `json:"body" valid:"required"`
 }
 
 type RequestHeader struct {
@@ -17,31 +17,31 @@ type RequestHeader struct {
 	ReqTime      string `json:"reqTime" valid:"required"`
 	ReqMsgID     string `json:"reqMsgId" valid:"required"`
 	ClientSecret string `json:"clientSecret" valid:"required"`
-	AccessToken  string `json:"accessToken" valid:"optional"`
-	Reserve      string `json:"reserve" valid:"optional"`
+	AccessToken  string `json:"accessToken,omitempty" valid:"optional"`
+	Reserve      string `json:"reserve,omitempty" valid:"optional"`
 }
 
 type RequestBody struct {
-	Order             Order             `json:"order" valid:"required"`
-	MerchantID        string            `json:"merchantId" valid:"required"`
-	Mcc               string            `json:"mcc" valid:"optional"`
-	ProductCode       string            `json:"productCode" valid:"required"`
-	EnvInfo           EnvInfo           `json:"envInfo" valid:"required"`
-	NotificationUrls  []NotificationUrl `json:"notificationUrls" valid:"optional"`
-	ExtendInfo        string            `json:"extendInfo" valid:"optional"`
-	PaymentPreference PaymentPreference `json:"paymentPreference" valid:"optional"`
+	Order             Order              `json:"order" valid:"required"`
+	MerchantID        string             `json:"merchantId" valid:"required"`
+	Mcc               string             `json:"mcc,omitempty" valid:"optional"`
+	ProductCode       string             `json:"productCode" valid:"required"`
+	EnvInfo           EnvInfo            `json:"envInfo" valid:"required"`
+	NotificationUrls  *[]NotificationUrl `json:"notificationUrls,omitempty" valid:"optional"`
+	ExtendInfo        string             `json:"extendInfo,omitempty" valid:"optional"`
+	PaymentPreference *PaymentPreference `json:"paymentPreference,omitempty" valid:"optional"`
 }
 
 type Order struct {
 	OrderTitle        string         `json:"orderTitle"`
 	OrderAmount       Amount         `json:"orderAmount"`
 	MerchantTransID   string         `json:"merchantTransId"`
-	MerchantTransType string         `json:"merchantTransType"`
-	OrderMemo         string         `json:"orderMemo"`
-	CreatedTime       string         `json:"createdTime"`
-	ExpiryTime        string         `json:"expiryTime"`
-	Goods             []Good         `json:"goods"`
-	ShippingInfo      []ShippingInfo `json:"shippingInfo"`
+	MerchantTransType string         `json:"merchantTransType,omitempty"`
+	OrderMemo         string         `json:"orderMemo,omitempty"`
+	CreatedTime       string         `json:"createdTime,omitempty"`
+	ExpiryTime        string         `json:"expiryTime,omitempty"`
+	Goods             []Good         `json:"goods,omitempty"`
+	ShippingInfo      []ShippingInfo `json:"shippingInfo,omitempty"`
 }
 
 type Amount struct {
@@ -50,52 +50,52 @@ type Amount struct {
 }
 
 type Good struct {
-	MerchantGoodsID    string `json:"merchantGoodsId"`
+	MerchantGoodsID    string `json:"merchantGoodsId,omitempty"`
 	Description        string `json:"description"`
-	Category           string `json:"category"`
+	Category           string `json:"category,omitempty"`
 	Price              Amount `json:"price"`
-	Unit               string `json:"unit"`
-	Quantity           string `json:"quantity"`
-	MerchantShippingID string `json:"merchantShippingId"`
-	SnapshotURL        string `json:"snapshotUrl"`
-	ExtendInfo         string `json:"extendInfo"`
+	Unit               string `json:"unit,omitempty"`
+	Quantity           string `json:"quantity,omitempty"`
+	MerchantShippingID string `json:"merchantShippingId,omitempty"`
+	SnapshotURL        string `json:"snapshotUrl,omitempty"`
+	ExtendInfo         string `json:"extendInfo,omitempty"`
 }
 
 type ShippingInfo struct {
 	MerchantShippingID string `json:"merchantShippingId"`
-	TrackingNo         string `json:"trackingNo"`
-	Carrier            string `json:"carrier"`
-	ChargeAmount       Amount `json:"chargeAmount"`
+	TrackingNo         string `json:"trackingNo,omitempty"`
+	Carrier            string `json:"carrier,omitempty"`
+	ChargeAmount       Amount `json:"chargeAmount,omitempty"`
 	CountryName        string `json:"countryName"`
 	StateName          string `json:"stateName"`
 	CityName           string `json:"cityName"`
-	AreaName           string `json:"areaName"`
+	AreaName           string `json:"areaName,omitempty"`
 	Address1           string `json:"address1"`
-	Address2           string `json:"address2"`
+	Address2           string `json:"address2,omitempty"`
 	FirstName          string `json:"firstName"`
 	LastName           string `json:"lastName"`
-	MobileNo           string `json:"mobileNo"`
-	PhoneNo            string `json:"phoneNo"`
+	MobileNo           string `json:"mobileNo,omitempty"`
+	PhoneNo            string `json:"phoneNo,omitempty"`
 	ZipCode            string `json:"zipCode"`
-	Email              string `json:"email"`
-	FaxNo              string `json:"faxNo"`
+	Email              string `json:"email,omitempty"`
+	FaxNo              string `json:"faxNo,omitempty"`
 }
 
 type EnvInfo struct {
-	SessionID          string `json:"sessionId"`
-	TokenID            string `json:"tokenId"`
-	WebsiteLanguage    string `json:"websiteLanguage"`
-	ClientIP           string `json:"clientIp"`
-	OsType             string `json:"osType"`
-	AppVersion         string `json:"appVersion"`
-	SdkVersion         string `json:"sdkVersion"`
+	SessionID          string `json:"sessionId,omitempty"`
+	TokenID            string `json:"tokenId,omitempty"`
+	WebsiteLanguage    string `json:"websiteLanguage,omitempty"`
+	ClientIP           string `json:"clientIp,omitempty"`
+	OsType             string `json:"osType,omitempty"`
+	AppVersion         string `json:"appVersion,omitempty"`
+	SdkVersion         string `json:"sdkVersion,omitempty"`
 	SourcePlatform     string `json:"sourcePlatform"`
 	TerminalType       string `json:"terminalType"`
-	ClientKey          string `json:"clientKey"`
+	ClientKey          string `json:"clientKey,omitempty"`
 	OrderTerminalType  string `json:"orderTerminalType"`
-	OrderOsType        string `json:"orderOsType"`
-	MerchantAppVersion string `json:"merchantAppVersion"`
-	ExtendInfo         string `json:"extendInfo"`
+	OrderOsType        string `json:"orderOsType,omitempty"`
+	MerchantAppVersion string `json:"merchantAppVersion,omitempty"`
+	ExtendInfo         string `json:"extendInfo,omitempty"`
 }
 
 type NotificationUrl struct {
