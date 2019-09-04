@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	uuid "github.com/satori/go.uuid"
+	uuid "github.com/google/uuid"
 )
 
 const (
@@ -46,12 +46,13 @@ func (gateway *CoreGateway) Order(reqBody *RequestBody) (res OrderResponse, err 
 	head.ReqTime = now.Format(DANA_TIME_LAYOUT)
 	head.ClientSecret = gateway.Client.ClientSecret
 
-	u, err := uuid.NewV4()
+	var id uuid.UUID
+	id, err = uuid.NewUUID()
 	if err != nil {
-		return OrderResponse{}, err
+		return res, err
 	}
 
-	head.ReqMsgID = uuid.Must(u, err).String()
+	head.ReqMsgID = id.String()
 
 	req := Request{
 		Head: head,
