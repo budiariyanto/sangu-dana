@@ -83,10 +83,12 @@ func (gateway *CoreGateway) Order(reqBody *RequestBody) (res OrderResponse, err 
 		return
 	}
 
-	//response RSA verification
-	err = VerifySignature(res.Response, res.Signature, gateway.Client.PublicKey, TYPE_ORDER)
-	if err != nil {
-		err = fmt.Errorf("could not verify request: %v", err)
+	if gateway.Client.EnableSignature {
+		//response RSA verification
+		err = VerifySignature(res.Response, res.Signature, gateway.Client.PublicKey, TYPE_ORDER)
+		if err != nil {
+			err = fmt.Errorf("could not verify request: %v", err)
+		}
 	}
 	return
 }

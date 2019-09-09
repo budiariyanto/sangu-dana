@@ -12,15 +12,16 @@ import (
 
 // Client struct
 type Client struct {
-	BaseUrl      string
-	Version      string
-	Function     string
-	ClientId     string
-	ClientSecret string
-	PrivateKey   []byte
-	PublicKey    []byte
-	LogLevel     int
-	Logger       *log.Logger
+	BaseUrl         string
+	Version         string
+	Function        string
+	ClientId        string
+	ClientSecret    string
+	PrivateKey      []byte
+	PublicKey       []byte
+	EnableSignature bool
+	LogLevel        int
+	Logger          *log.Logger
 }
 
 // NewClient : this function will always be called when the library is in use
