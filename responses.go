@@ -10,9 +10,9 @@ type Response struct {
 }
 
 type ResponseHeader struct {
-	Version   string `json:"version" valid:"required"`
 	Function  string `json:"function" valid:"required"`
 	ClientID  string `json:"clientId" valid:"required"`
+	Version   string `json:"version" valid:"required"`
 	RespTime  string `json:"respTime" valid:"required"`
 	RespMsgID string `json:"reqMsgId" valid:"required"`
 }

@@ -1,6 +1,7 @@
 package dana
 
 import (
+	"bytes"
 	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
@@ -12,6 +13,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strings"
 )
 
 const (
@@ -19,7 +21,7 @@ const (
 	TYPE_PAY_NOTIFY = "PAY_NOTIFY"
 )
 
-func generateSignature(req Request, privateKey []byte) (sig string, err error) {
+func GenerateSignature(req Request, privateKey []byte) (sig string, err error) {
 	signer, err := parsePrivateKey(privateKey)
 	if err != nil {
 		err = fmt.Errorf("signer is damaged: %v", err)
@@ -79,9 +81,17 @@ func VerifySignature(data interface{}, sig string, publicKey []byte, typeRespons
 		return errors.New("cast interface to concrete type fail")
 	}
 
-	dataByte, _ := json.Marshal(data)
+	buf := new(bytes.Buffer)
+	e := json.NewEncoder(buf)
+	e.SetEscapeHTML(false)
+	if err := e.Encode(data); err != nil {
+		log.Println(err)
+	}
+
+	message := strings.TrimSpace(buf.String())
+
 	ds, _ := base64.StdEncoding.DecodeString(sig)
-	return parser.Unsign(dataByte, ds)
+	return parser.Unsign([]byte(message), ds)
 }
 
 // parsePublicKey parses a PEM encoded private key.
