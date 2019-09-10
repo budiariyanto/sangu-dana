@@ -59,7 +59,7 @@ func (gateway *CoreGateway) Order(reqBody *RequestBody) (res OrderResponse, err 
 		Body: reqBody,
 	}
 
-	sig, err := generateSignature(req, gateway.Client.PrivateKey)
+	sig, err := GenerateSignature(req, gateway.Client.PrivateKey)
 	if err != nil {
 		err = fmt.Errorf("failed to generate signature: %v", err)
 		return

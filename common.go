@@ -21,7 +21,7 @@ const (
 	TYPE_PAY_NOTIFY = "PAY_NOTIFY"
 )
 
-func generateSignature(req Request, privateKey []byte) (sig string, err error) {
+func GenerateSignature(req Request, privateKey []byte) (sig string, err error) {
 	signer, err := parsePrivateKey(privateKey)
 	if err != nil {
 		err = fmt.Errorf("signer is damaged: %v", err)
