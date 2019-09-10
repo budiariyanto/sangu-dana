@@ -21,7 +21,7 @@ const (
 	TYPE_PAY_NOTIFY = "PAY_NOTIFY"
 )
 
-func GenerateSignature(req Request, privateKey []byte) (sig string, err error) {
+func generateSignature(req interface{}, privateKey []byte) (sig string, err error) {
 	signer, err := parsePrivateKey(privateKey)
 	if err != nil {
 		err = fmt.Errorf("signer is damaged: %v", err)
@@ -61,24 +61,10 @@ func parsePrivateKey(pemBytes []byte) (Signer, error) {
 	return newSignerFromKey(rawkey)
 }
 
-func VerifySignature(data interface{}, sig string, publicKey []byte, typeResponse string) error {
+func verifySignature(data interface{}, sig string, publicKey []byte) error {
 	parser, perr := parsePublicKey(publicKey)
 	if perr != nil {
 		log.Printf("could load public key: %v", perr)
-	}
-
-	ok := false
-	switch typeResponse {
-	case TYPE_ORDER:
-		data, ok = data.(Response)
-	case TYPE_PAY_NOTIFY:
-		data, ok = data.(RequestPayFinish)
-	default:
-		return errors.New("type response not set")
-	}
-
-	if !ok {
-		return errors.New("cast interface to concrete type fail")
 	}
 
 	buf := new(bytes.Buffer)

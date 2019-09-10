@@ -59,7 +59,7 @@ func (gateway *CoreGateway) Order(reqBody *RequestBody) (res OrderResponse, err 
 		Body: reqBody,
 	}
 
-	sig, err := GenerateSignature(req, gateway.Client.PrivateKey)
+	sig, err := generateSignature(req, gateway.Client.PrivateKey)
 	if err != nil {
 		err = fmt.Errorf("failed to generate signature: %v", err)
 		return
@@ -84,7 +84,25 @@ func (gateway *CoreGateway) Order(reqBody *RequestBody) (res OrderResponse, err 
 	}
 
 	//response RSA verification
-	err = VerifySignature(res.Response, res.Signature, gateway.Client.PublicKey, TYPE_ORDER)
+	err = verifySignature(res.Response, res.Signature, gateway.Client.PublicKey)
+	if err != nil {
+		err = fmt.Errorf("could not verify request: %v", err)
+	}
+	return
+}
+
+func (gateway *CoreGateway) GenerateSignature(req interface{}) (signature string, err error) {
+	signature, err = generateSignature(req, gateway.Client.PrivateKey)
+	if err != nil {
+		err = fmt.Errorf("failed to generate signature: %v", err)
+		return
+	}
+
+	return
+}
+
+func (gateway *CoreGateway) VerifySignature(res interface{}, signature string) (err error) {
+	err = verifySignature(res, signature, gateway.Client.PublicKey)
 	if err != nil {
 		err = fmt.Errorf("could not verify request: %v", err)
 	}
