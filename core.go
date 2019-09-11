@@ -36,7 +36,7 @@ func (gateway *CoreGateway) Call(method, path string, header map[string]string, 
 	return gateway.Client.Call(method, path, header, body, v)
 }
 
-func (gateway *CoreGateway) Order(reqBody *RequestBody) (res OrderResponse, err error) {
+func (gateway *CoreGateway) Order(reqBody *RequestBody) (res ResponseBody, err error) {
 	now := time.Now()
 
 	head := RequestHeader{}
@@ -64,7 +64,7 @@ func (gateway *CoreGateway) Order(reqBody *RequestBody) (res OrderResponse, err 
 		err = fmt.Errorf("failed to generate signature: %v", err)
 		return
 	}
-	orderReq := OrderRequest{
+	orderReq := RequestBody{
 		Request:   req,
 		Signature: sig,
 	}
@@ -73,6 +73,64 @@ func (gateway *CoreGateway) Order(reqBody *RequestBody) (res OrderResponse, err 
 	log.Println("Dana request: ", string(reqJson))
 	requestByte, _ := json.Marshal(orderReq)
 	requestReader := bytes.NewBuffer(requestByte)
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	err = gateway.Call("POST", ORDER_PATH, headers, requestReader, &res)
+	if err != nil {
+		return
+	}
+
+	//response RSA verification
+	err = verifySignature(res.Response, res.Signature, gateway.Client.PublicKey)
+	if err != nil {
+		err = fmt.Errorf("could not verify request: %v", err)
+	}
+	return
+}
+
+func (gateway *CoreGateway) OrderDetail(reqBody *OrderDetailRequestData) (res ResponseBody, err error) {
+	now := time.Now()
+
+	head := RequestHeader{}
+	head.Version = gateway.Client.Version
+	head.Function = gateway.Client.Function
+	head.ClientID = gateway.Client.ClientId
+	head.ReqTime = now.Format(DANA_TIME_LAYOUT)
+	head.ClientSecret = gateway.Client.ClientSecret
+
+	var id uuid.UUID
+	id, err = uuid.NewUUID()
+	if err != nil {
+		return res, err
+	}
+
+	head.ReqMsgID = id.String()
+
+	req := Request{
+		Head: head,
+		Body: reqBody,
+	}
+
+	sig, err := generateSignature(req, gateway.Client.PrivateKey)
+	if err != nil {
+		err = fmt.Errorf("failed to generate signature: %v", err)
+		return
+	}
+	orderDetailReq := RequestBody{
+		Request:   req,
+		Signature: sig,
+	}
+
+	reqJson, err := json.Marshal(orderDetailReq)
+	if err != nil {
+		return
+	}
+
+	log.Println("Dana request: ", string(reqJson))
+	requestReader := bytes.NewBuffer(reqJson)
 
 	headers := map[string]string{
 		"Content-Type": "application/json",
