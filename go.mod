@@ -1,4 +1,4 @@
-module github.com/sangu-dana
+module github.com/kitabisa/sangu-dana
 
 go 1.13
 
