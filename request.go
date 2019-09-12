@@ -1,13 +1,13 @@
 package dana
 
-type OrderRequest struct {
+type RequestBody struct {
 	Request   Request `json:"request" valid:"required"`
 	Signature string  `json:"signature" valid:"required"`
 }
 
 type Request struct {
 	Head RequestHeader `json:"head" valid:"required"`
-	Body *RequestBody  `json:"body" valid:"required"`
+	Body interface{}   `json:"body" valid:"required"`
 }
 
 type RequestHeader struct {
@@ -21,7 +21,7 @@ type RequestHeader struct {
 	Reserve      string `json:"reserve,omitempty" valid:"optional"`
 }
 
-type RequestBody struct {
+type OrderRequestData struct {
 	Order             Order              `json:"order" valid:"required"`
 	MerchantID        string             `json:"merchantId" valid:"required"`
 	Mcc               string             `json:"mcc,omitempty" valid:"optional"`
@@ -30,6 +30,12 @@ type RequestBody struct {
 	NotificationUrls  *[]NotificationUrl `json:"notificationUrls,omitempty" valid:"optional"`
 	ExtendInfo        string             `json:"extendInfo,omitempty" valid:"optional"`
 	PaymentPreference *PaymentPreference `json:"paymentPreference,omitempty" valid:"optional"`
+}
+
+type OrderDetailRequestData struct {
+	MerchantID      string `json:"merchantId" valid:"required"`
+	AcquirementID   string `json:"acquirementId" valid:"optional"`
+	MerchantTransID string `json:"merchantTransId" valid:"optional"`
 }
 
 type Order struct {
