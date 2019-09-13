@@ -10,6 +10,7 @@ import (
 	"time"
 
 	uuid "github.com/google/uuid"
+	"github.com/mitchellh/mapstructure"
 )
 
 const (
@@ -36,62 +37,59 @@ func (gateway *CoreGateway) Call(method, path string, header map[string]string, 
 	return gateway.Client.Call(method, path, header, body, v)
 }
 
-func (gateway *CoreGateway) Order(reqBody *RequestBody) (res ResponseBody, err error) {
-	now := time.Now()
-
-	head := RequestHeader{}
-	head.Version = gateway.Client.Version
-	head.Function = gateway.Client.Function
-	head.ClientID = gateway.Client.ClientId
-	head.ReqTime = now.Format(DANA_TIME_LAYOUT)
-	head.ClientSecret = gateway.Client.ClientSecret
-
-	var id uuid.UUID
-	id, err = uuid.NewUUID()
+func (gateway *CoreGateway) Order(reqBody *OrderRequestData) (res ResponseBody, err error) {
+	res, err = gateway.requestToDana(reqBody)
 	if err != nil {
-		return res, err
+		return
 	}
 
-	head.ReqMsgID = id.String()
-
-	req := Request{
-		Head: head,
-		Body: reqBody,
+	var orderResponseData OrderResponseData
+	err = mapstructure.Decode(res.Response.Body, &orderResponseData)
+	if err != nil {
+		return
 	}
 
-	sig, err := generateSignature(req, gateway.Client.PrivateKey)
+	res.Response.Body = orderResponseData
+
+	return
+}
+
+func (gateway *CoreGateway) OrderDetail(reqBody *OrderDetailRequestData) (res ResponseBody, err error) {
+	res, err = gateway.requestToDana(reqBody)
+	if err != nil {
+		return
+	}
+
+	var orderDetailData OrderDetailData
+	err = mapstructure.Decode(res.Response.Body, &orderDetailData)
+	if err != nil {
+		return
+	}
+
+	res.Response.Body = orderDetailData
+
+	return
+}
+
+func (gateway *CoreGateway) GenerateSignature(req interface{}) (signature string, err error) {
+	signature, err = generateSignature(req, gateway.Client.PrivateKey)
 	if err != nil {
 		err = fmt.Errorf("failed to generate signature: %v", err)
 		return
 	}
-	orderReq := RequestBody{
-		Request:   req,
-		Signature: sig,
-	}
 
-	reqJson, _ := json.Marshal(orderReq)
-	log.Println("Dana request: ", string(reqJson))
-	requestByte, _ := json.Marshal(orderReq)
-	requestReader := bytes.NewBuffer(requestByte)
+	return
+}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-
-	err = gateway.Call("POST", ORDER_PATH, headers, requestReader, &res)
-	if err != nil {
-		return
-	}
-
-	//response RSA verification
-	err = verifySignature(res.Response, res.Signature, gateway.Client.PublicKey)
+func (gateway *CoreGateway) VerifySignature(res interface{}, signature string) (err error) {
+	err = verifySignature(res, signature, gateway.Client.PublicKey)
 	if err != nil {
 		err = fmt.Errorf("could not verify request: %v", err)
 	}
 	return
 }
 
-func (gateway *CoreGateway) OrderDetail(reqBody *OrderDetailRequestData) (res ResponseBody, err error) {
+func (gateway *CoreGateway) requestToDana(reqBody interface{}) (res ResponseBody, err error) {
 	now := time.Now()
 
 	head := RequestHeader{}
@@ -143,24 +141,6 @@ func (gateway *CoreGateway) OrderDetail(reqBody *OrderDetailRequestData) (res Re
 
 	//response RSA verification
 	err = verifySignature(res.Response, res.Signature, gateway.Client.PublicKey)
-	if err != nil {
-		err = fmt.Errorf("could not verify request: %v", err)
-	}
-	return
-}
-
-func (gateway *CoreGateway) GenerateSignature(req interface{}) (signature string, err error) {
-	signature, err = generateSignature(req, gateway.Client.PrivateKey)
-	if err != nil {
-		err = fmt.Errorf("failed to generate signature: %v", err)
-		return
-	}
-
-	return
-}
-
-func (gateway *CoreGateway) VerifySignature(res interface{}, signature string) (err error) {
-	err = verifySignature(res, signature, gateway.Client.PublicKey)
 	if err != nil {
 		err = fmt.Errorf("could not verify request: %v", err)
 	}
