@@ -51,6 +51,12 @@ func (gateway *CoreGateway) Order(reqBody *OrderRequestData) (res ResponseBody, 
 
 	res.Response.Body = orderResponseData
 
+	//response RSA verification
+	err = verifySignature(res.Response, res.Signature, gateway.Client.PublicKey)
+	if err != nil {
+		err = fmt.Errorf("could not verify request: %v", err)
+	}
+
 	return
 }
 
@@ -67,6 +73,11 @@ func (gateway *CoreGateway) OrderDetail(reqBody *OrderDetailRequestData) (res Re
 	}
 
 	res.Response.Body = orderDetailData
+
+	err = verifySignature(res.Response, res.Signature, gateway.Client.PublicKey)
+	if err != nil {
+		err = fmt.Errorf("could not verify request: %v", err)
+	}
 
 	return
 }
@@ -139,10 +150,5 @@ func (gateway *CoreGateway) requestToDana(reqBody interface{}) (res ResponseBody
 		return
 	}
 
-	//response RSA verification
-	err = verifySignature(res.Response, res.Signature, gateway.Client.PublicKey)
-	if err != nil {
-		err = fmt.Errorf("could not verify request: %v", err)
-	}
 	return
 }
