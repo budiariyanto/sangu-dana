@@ -14,7 +14,6 @@ import (
 type Client struct {
 	BaseUrl      string
 	Version      string
-	Function     string
 	ClientId     string
 	ClientSecret string
 	PrivateKey   []byte
