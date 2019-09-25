@@ -19,6 +19,9 @@ const (
 	QUERY_PATH       = "alipayplus/acquiring/order/query.htm"
 	DANA_TIME_LAYOUT = "2006-01-02T15:04:05.000-07:00"
 	CURRENCY_IDR     = "IDR"
+
+	FUNCTION_CREATE_ORDER = "dana.acquiring.order.createOrder"
+	FUNCTION_QUERY_ORDER  = " dana.acquiring.order.query"
 )
 
 // CoreGateway struct
@@ -40,7 +43,7 @@ func (gateway *CoreGateway) Call(method, path string, header map[string]string, 
 func (gateway *CoreGateway) Order(reqBody *OrderRequestData) (res ResponseBody, err error) {
 	reqBody.Order.OrderAmount.Value = fmt.Sprintf("%v00", reqBody.Order.OrderAmount.Value)
 
-	res, err = gateway.requestToDana(reqBody)
+	res, err = gateway.requestToDana(reqBody, FUNCTION_CREATE_ORDER)
 	if err != nil {
 		return
 	}
@@ -63,7 +66,7 @@ func (gateway *CoreGateway) Order(reqBody *OrderRequestData) (res ResponseBody, 
 }
 
 func (gateway *CoreGateway) OrderDetail(reqBody *OrderDetailRequestData) (res ResponseBody, err error) {
-	res, err = gateway.requestToDana(reqBody)
+	res, err = gateway.requestToDana(reqBody, FUNCTION_QUERY_ORDER)
 	if err != nil {
 		return
 	}
@@ -102,12 +105,12 @@ func (gateway *CoreGateway) VerifySignature(res interface{}, signature string) (
 	return
 }
 
-func (gateway *CoreGateway) requestToDana(reqBody interface{}) (res ResponseBody, err error) {
+func (gateway *CoreGateway) requestToDana(reqBody interface{}, headerFunction string) (res ResponseBody, err error) {
 	now := time.Now()
 
 	head := RequestHeader{}
 	head.Version = gateway.Client.Version
-	head.Function = gateway.Client.Function
+	head.Function = headerFunction
 	head.ClientID = gateway.Client.ClientId
 	head.ReqTime = now.Format(DANA_TIME_LAYOUT)
 	head.ClientSecret = gateway.Client.ClientSecret
