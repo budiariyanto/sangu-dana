@@ -1,5 +1,7 @@
 package dana
 
+import "time"
+
 type RequestBody struct {
 	Request   Request `json:"request" valid:"required"`
 	Signature string  `json:"signature" valid:"required"`
@@ -36,6 +38,22 @@ type OrderDetailRequestData struct {
 	MerchantID      string `json:"merchantId" valid:"required"`
 	AcquirementID   string `json:"acquirementId" valid:"optional"`
 	MerchantTransID string `json:"merchantTransId" valid:"optional"`
+}
+
+type RefundRequestData struct {
+	RequestID           string       `json:"requestId" valid:"required"`
+	MerchantID          string       `json:"merchantId" valid:"required"`
+	AcquirementID       string       `json:"acquirementId,omitempty" valid:"optional"`
+	RefundAmount        Amount       `json:"refundAmount,omitempty" valid:"required"`
+	RefundAppliedTime   time.Time    `json:"refundAppliedTime,omitempty" valid:"optional"`
+	ActorType           string       `json:"actorType,omitempty" valid:"optional"`
+	RefundReason        string       `json:"refundReason,omitempty" valid:"optional"`
+	ReturnChargeToPayer bool         `json:"returnChargeToPayer,omitempty" valid:"optional"`
+	Destination         string       `json:"destination,omitempty" valid:"optional"`
+	ExtendInfo          string       `json:"extendInfo,omitempty" valid:"optional"`
+	EnvInfo             EnvInfo      `json:"envInfo,omitempty" valid:"optional"`
+	AuditInfo           AuditInfo    `json:"auditInfo,omitempty" valid:"optional"`
+	ActorContext        ActorContext `json:"actorContext,omitempty" valid:"optional"`
 }
 
 type Order struct {
@@ -102,6 +120,16 @@ type EnvInfo struct {
 	OrderOsType        string `json:"orderOsType,omitempty"`
 	MerchantAppVersion string `json:"merchantAppVersion,omitempty"`
 	ExtendInfo         string `json:"extendInfo,omitempty"`
+}
+
+type AuditInfo struct {
+	ActionReason  string `json:"actionReason" valid:"optional"`
+	ThirdClientID string `json:"thirdClientId" valid:"optional"`
+}
+
+type ActorContext struct {
+	ActorID   string `json:"actorId" valid:"required"`
+	ActorType string `json:"actorType" valid:"required"`
 }
 
 type NotificationUrl struct {

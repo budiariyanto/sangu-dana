@@ -17,11 +17,13 @@ const (
 	//ORDER_PATH       = "https://api-sandbox.saas.dana.id/alipayplus/acquiring/order/createOrder.htm"
 	ORDER_PATH       = "alipayplus/acquiring/order/createOrder.htm"
 	QUERY_PATH       = "alipayplus/acquiring/order/query.htm"
+	REFUND_PATH      = "alipayplus/acquiring/refund/refund.htm"
 	DANA_TIME_LAYOUT = "2006-01-02T15:04:05.000-07:00"
 	CURRENCY_IDR     = "IDR"
 
 	FUNCTION_CREATE_ORDER = "dana.acquiring.order.createOrder"
 	FUNCTION_QUERY_ORDER  = " dana.acquiring.order.query"
+	FUNCTION_REFUND       = "dana.acquiring.refund.refund"
 )
 
 // CoreGateway struct
@@ -43,7 +45,7 @@ func (gateway *CoreGateway) Call(method, path string, header map[string]string, 
 func (gateway *CoreGateway) Order(reqBody *OrderRequestData) (res ResponseBody, err error) {
 	reqBody.Order.OrderAmount.Value = fmt.Sprintf("%v00", reqBody.Order.OrderAmount.Value)
 
-	res, err = gateway.requestToDana(reqBody, FUNCTION_CREATE_ORDER)
+	res, err = gateway.requestToDana(reqBody, FUNCTION_CREATE_ORDER, ORDER_PATH)
 	if err != nil {
 		return
 	}
@@ -66,7 +68,7 @@ func (gateway *CoreGateway) Order(reqBody *OrderRequestData) (res ResponseBody, 
 }
 
 func (gateway *CoreGateway) OrderDetail(reqBody *OrderDetailRequestData) (res ResponseBody, err error) {
-	res, err = gateway.requestToDana(reqBody, FUNCTION_QUERY_ORDER)
+	res, err = gateway.requestToDana(reqBody, FUNCTION_QUERY_ORDER, ORDER_PATH)
 	if err != nil {
 		return
 	}
@@ -78,6 +80,30 @@ func (gateway *CoreGateway) OrderDetail(reqBody *OrderDetailRequestData) (res Re
 	}
 
 	res.Response.Body = orderDetailData
+
+	err = verifySignature(res.Response, res.Signature, gateway.Client.PublicKey)
+	if err != nil {
+		err = fmt.Errorf("could not verify request: %v", err)
+	}
+
+	return
+}
+
+func (gateway *CoreGateway) Refund(reqBody *RefundRequestData) (res ResponseBody, err error) {
+	reqBody.RefundAmount.Value = fmt.Sprintf("%v00", reqBody.RefundAmount.Value)
+
+	res, err = gateway.requestToDana(reqBody, FUNCTION_REFUND, REFUND_PATH)
+	if err != nil {
+		return
+	}
+
+	var RefundResponseData RefundResponseData
+	err = mapstructure.Decode(res.Response.Body, &RefundResponseData)
+	if err != nil {
+		return
+	}
+
+	res.Response.Body = RefundResponseData
 
 	err = verifySignature(res.Response, res.Signature, gateway.Client.PublicKey)
 	if err != nil {
@@ -105,7 +131,7 @@ func (gateway *CoreGateway) VerifySignature(res interface{}, signature string) (
 	return
 }
 
-func (gateway *CoreGateway) requestToDana(reqBody interface{}, headerFunction string) (res ResponseBody, err error) {
+func (gateway *CoreGateway) requestToDana(reqBody interface{}, headerFunction string, path string) (res ResponseBody, err error) {
 	now := time.Now()
 
 	head := RequestHeader{}
@@ -150,7 +176,7 @@ func (gateway *CoreGateway) requestToDana(reqBody interface{}, headerFunction st
 		"Content-Type": "application/json",
 	}
 
-	err = gateway.Call("POST", ORDER_PATH, headers, requestReader, &res)
+	err = gateway.Call("POST", path, headers, requestReader, &res)
 	if err != nil {
 		return
 	}
