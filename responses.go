@@ -44,6 +44,12 @@ type OrderDetailData struct {
 	PaymentViews    []PaymentView  `json:"paymentViews" valid:"optional"`
 }
 
+type RefundResponseData struct {
+	ResultInfo ResultInfo `json:"resultInfo" valid:"required"`
+	RefundID   string     `json:"refundId" valid:"optional"`
+	RequestID  string     `json:"requestId" valid:"optional"`
+}
+
 type ResultInfo struct {
 	ResultStatus string `json:"resultStatus" valid:"optional"`
 	ResultCodeID string `json:"resultCodeId" valid:"optional"`

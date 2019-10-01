@@ -46,3 +46,35 @@ func (p PayMethodEnum) String() string {
 		"DIRECT_DEBIT_CREDIT_CARD",
 		"DIRECT_DEBIT_DEBIT_CARD"}[p]
 }
+
+type ActorTypeEnum int
+
+const (
+	User ActorTypeEnum = iota
+	Merchant
+	MerchantOperator
+	BackOffice
+	System
+)
+
+func (a ActorTypeEnum) String() string {
+	return [...]string{
+		"USER",
+		"MERCHANT",
+		"MERCHANT_OPERATOR",
+		"BACK_OFFICE",
+		"SYSTEM"}[a]
+}
+
+type RefundDestinationEnum int
+
+const (
+	ToBalance RefundDestinationEnum = iota
+	ToSource
+)
+
+func (r RefundDestinationEnum) String() string {
+	return [...]string{
+		"TO_BALANCE",
+		"TO_SOURCE"}[r]
+}
