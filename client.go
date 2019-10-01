@@ -12,15 +12,14 @@ import (
 
 // Client struct
 type Client struct {
-	BaseUrl         string
-	Version         string
-	ClientId        string
-	ClientSecret    string
-	PrivateKey      []byte
-	PublicKey       []byte
-	VerifySignature bool
-	LogLevel        int
-	Logger          *log.Logger
+	BaseUrl      string
+	Version      string
+	ClientId     string
+	ClientSecret string
+	PrivateKey   []byte
+	PublicKey    []byte
+	LogLevel     int
+	Logger       *log.Logger
 }
 
 // NewClient : this function will always be called when the library is in use
@@ -31,9 +30,8 @@ func NewClient() Client {
 		// 1: Errors only
 		// 2: Errors + informational (default)
 		// 3: Errors + informational + debug
-		VerifySignature: true,
-		LogLevel:        2,
-		Logger:          log.New(os.Stderr, "", log.LstdFlags),
+		LogLevel: 2,
+		Logger:   log.New(os.Stderr, "", log.LstdFlags),
 	}
 }
 

@@ -21,9 +21,9 @@ type ResponseHeader struct {
 }
 
 type OrderResponseData struct {
-	MerchantTransID string     `json:"merchantTransId" valid:"optional"`
-	AcquirementID   string     `json:"acquirementId" valid:"optional"`
-	CheckoutURL     string     `json:"checkoutUrl" valid:"optional"`
+	MerchantTransID *string    `json:"merchantTransId,omitempty" valid:"optional"`
+	AcquirementID   *string    `json:"acquirementId,omitempty" valid:"optional"`
+	CheckoutURL     *string    `json:"checkoutUrl,omitempty" valid:"optional"`
 	ResultInfo      ResultInfo `json:"resultInfo" valid:"required"`
 }
 
@@ -46,8 +46,8 @@ type OrderDetailData struct {
 
 type RefundResponseData struct {
 	ResultInfo ResultInfo `json:"resultInfo" valid:"required"`
-	RefundID   string     `json:"refundId" valid:"optional"`
-	RequestID  string     `json:"requestId" valid:"optional"`
+	RefundID   *string    `json:"refundId,omitempty" valid:"optional"`
+	RequestID  *string    `json:"requestId,omitempty" valid:"optional"`
 }
 
 type ResultInfo struct {
