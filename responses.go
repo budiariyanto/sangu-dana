@@ -46,8 +46,8 @@ type OrderDetailData struct {
 
 type RefundResponseData struct {
 	ResultInfo ResultInfo `json:"resultInfo" valid:"required"`
-	RefundID   *string    `json:"refundId,omitempty" valid:"optional"`
 	RequestID  *string    `json:"requestId,omitempty" valid:"optional"`
+	RefundID   *string    `json:"refundId,omitempty" valid:"optional"`
 }
 
 type ResultInfo struct {
