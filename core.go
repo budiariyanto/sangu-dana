@@ -22,7 +22,7 @@ const (
 	CURRENCY_IDR     = "IDR"
 
 	FUNCTION_CREATE_ORDER = "dana.acquiring.order.createOrder"
-	FUNCTION_QUERY_ORDER  = " dana.acquiring.order.query"
+	FUNCTION_QUERY_ORDER  = "dana.acquiring.order.query"
 	FUNCTION_REFUND       = "dana.acquiring.refund.refund"
 )
 
