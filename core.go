@@ -68,7 +68,7 @@ func (gateway *CoreGateway) Order(reqBody *OrderRequestData) (res ResponseBody, 
 }
 
 func (gateway *CoreGateway) OrderDetail(reqBody *OrderDetailRequestData) (res ResponseBody, err error) {
-	res, err = gateway.requestToDana(reqBody, FUNCTION_QUERY_ORDER, ORDER_PATH)
+	res, err = gateway.requestToDana(reqBody, FUNCTION_QUERY_ORDER, QUERY_PATH)
 	if err != nil {
 		return
 	}
