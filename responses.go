@@ -97,8 +97,8 @@ type TimeDetail struct {
 }
 
 type StatusDetail struct {
-	AcquirementStatus StatusDetailEnum `json:"acquirementStatus" valid:"required"`
-	Frozen            bool             `json:"frozen" valid:"required"`
+	AcquirementStatus string `json:"acquirementStatus" valid:"required"`
+	Frozen            bool   `json:"frozen" valid:"required"`
 }
 
 type PaymentView struct {
