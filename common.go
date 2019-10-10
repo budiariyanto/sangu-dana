@@ -1,7 +1,6 @@
 package dana
 
 import (
-	"bytes"
 	"crypto"
 	"crypto/rand"
 	"crypto/rsa"
@@ -13,7 +12,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"strings"
 )
 
 const (
@@ -61,23 +59,14 @@ func parsePrivateKey(pemBytes []byte) (Signer, error) {
 	return newSignerFromKey(rawkey)
 }
 
-func verifySignature(data interface{}, sig string, publicKey []byte) error {
+func verifySignature(data string, sig string, publicKey []byte) error {
 	parser, perr := parsePublicKey(publicKey)
 	if perr != nil {
 		log.Printf("could load public key: %v", perr)
 	}
 
-	buf := new(bytes.Buffer)
-	e := json.NewEncoder(buf)
-	e.SetEscapeHTML(false)
-	if err := e.Encode(data); err != nil {
-		log.Println(err)
-	}
-
-	message := strings.TrimSpace(buf.String())
-
 	ds, _ := base64.StdEncoding.DecodeString(sig)
-	return parser.Unsign([]byte(message), ds)
+	return parser.Unsign([]byte(data), ds)
 }
 
 // parsePublicKey parses a PEM encoded private key.

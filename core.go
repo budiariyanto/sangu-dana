@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/tidwall/gjson"
 	"io"
 	"log"
 	"strings"
 	"time"
 
-	uuid "github.com/google/uuid"
+	"github.com/google/uuid"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -58,12 +59,6 @@ func (gateway *CoreGateway) Order(reqBody *OrderRequestData) (res ResponseBody, 
 
 	res.Response.Body = orderResponseData
 
-	//response RSA verification
-	err = verifySignature(res.Response, res.Signature, gateway.Client.PublicKey)
-	if err != nil {
-		err = fmt.Errorf("could not verify request: %v", err)
-	}
-
 	return
 }
 
@@ -80,11 +75,6 @@ func (gateway *CoreGateway) OrderDetail(reqBody *OrderDetailRequestData) (res Re
 	}
 
 	res.Response.Body = orderDetailData
-
-	err = verifySignature(res.Response, res.Signature, gateway.Client.PublicKey)
-	if err != nil {
-		err = fmt.Errorf("could not verify request: %v", err)
-	}
 
 	return
 }
@@ -105,11 +95,6 @@ func (gateway *CoreGateway) Refund(reqBody *RefundRequestData) (res ResponseBody
 
 	res.Response.Body = RefundResponseData
 
-	err = verifySignature(res.Response, res.Signature, gateway.Client.PublicKey)
-	if err != nil {
-		err = fmt.Errorf("could not verify request: %v", err)
-	}
-
 	return
 }
 
@@ -123,8 +108,9 @@ func (gateway *CoreGateway) GenerateSignature(req interface{}) (signature string
 	return
 }
 
-func (gateway *CoreGateway) VerifySignature(res interface{}, signature string) (err error) {
-	err = verifySignature(res, signature, gateway.Client.PublicKey)
+func (gateway *CoreGateway) VerifySignature(res []byte, signature string) (err error) {
+	response := gjson.Get(string(res), "request")
+	err = verifySignature(response.String(), signature, gateway.Client.PublicKey)
 	if err != nil {
 		err = fmt.Errorf("could not verify request: %v", err)
 	}

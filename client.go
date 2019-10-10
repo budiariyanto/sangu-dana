@@ -2,6 +2,7 @@ package dana
 
 import (
 	"encoding/json"
+	"github.com/tidwall/gjson"
 	"io"
 	"io/ioutil"
 	"log"
@@ -105,6 +106,14 @@ func (c *Client) ExecuteRequest(req *http.Request, v interface{}) error {
 
 	if v != nil && res.StatusCode == 200 {
 		if err = json.Unmarshal(resBody, v); err != nil {
+			return err
+		}
+
+		response := gjson.Get(string(resBody), "response")
+		signature := gjson.Get(string(resBody), "signature")
+
+		err := verifySignature(response.String(), signature.String(), c.PublicKey)
+		if err != nil {
 			return err
 		}
 	}
