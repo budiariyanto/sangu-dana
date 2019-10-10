@@ -1,7 +1,5 @@
 package dana
 
-import "time"
-
 type ResponseBody struct {
 	Response  Response `json:"response" valid:"required"`
 	Signature string   `json:"signature" valid:"required"`
@@ -21,9 +19,9 @@ type ResponseHeader struct {
 }
 
 type OrderResponseData struct {
-	MerchantTransID *string    `json:"merchantTransId,omitempty" valid:"optional"`
-	AcquirementID   *string    `json:"acquirementId,omitempty" valid:"optional"`
-	CheckoutURL     *string    `json:"checkoutUrl,omitempty" valid:"optional"`
+	MerchantTransID string     `json:"merchantTransId,omitempty" valid:"optional"`
+	AcquirementID   string     `json:"acquirementId,omitempty" valid:"optional"`
+	CheckoutURL     string     `json:"checkoutUrl,omitempty" valid:"optional"`
 	ResultInfo      ResultInfo `json:"resultInfo" valid:"required"`
 }
 
@@ -46,8 +44,8 @@ type OrderDetailData struct {
 
 type RefundResponseData struct {
 	ResultInfo ResultInfo `json:"resultInfo" valid:"required"`
-	RequestID  *string    `json:"requestId,omitempty" valid:"optional"`
-	RefundID   *string    `json:"refundId,omitempty" valid:"optional"`
+	RequestID  string     `json:"requestId,omitempty" valid:"optional"`
+	RefundID   string     `json:"refundId,omitempty" valid:"optional"`
 }
 
 type ResultInfo struct {
@@ -89,11 +87,11 @@ type AmountDetail struct {
 }
 
 type TimeDetail struct {
-	CreatedTime    time.Time   `json:"createdTime" valid:"required"`
-	ExpiryTime     time.Time   `json:"expiryTime" valid:"required"`
-	PaidTimes      []time.Time `json:"paidTimes" valid:"optional"`
-	ConfirmedTimes []time.Time `json:"confirmedTimes" valid:"optional"`
-	CancelledTime  time.Time   `json:"cancelledTime" valid:"optional"`
+	CreatedTime    string   `json:"createdTime" valid:"required"`
+	ExpiryTime     string   `json:"expiryTime" valid:"required"`
+	PaidTimes      []string `json:"paidTimes" valid:"optional"`
+	ConfirmedTimes []string `json:"confirmedTimes" valid:"optional"`
+	CancelledTime  string   `json:"cancelledTime" valid:"optional"`
 }
 
 type StatusDetail struct {
@@ -103,7 +101,7 @@ type StatusDetail struct {
 
 type PaymentView struct {
 	CashierRequestID     string          `json:"cashierRequestId" valid:"required"`
-	PaidTime             time.Time       `json:"paidTime" valid:"required"`
+	PaidTime             string          `json:"paidTime" valid:"required"`
 	PayOptionInfos       []PayOptionInfo `json:"payOptionInfos" valid:"required"`
 	PayRequestExtendInfo string          `json:"payRequestExtendInfo" valid:"optional"`
 	ExtendInfo           string          `json:"extendInfo" valid:"optional"`
