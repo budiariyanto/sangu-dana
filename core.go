@@ -65,8 +65,8 @@ func (gateway *CoreGateway) Order(reqBody *OrderRequestData, accessToken string)
 	return
 }
 
-func (gateway *CoreGateway) OrderDetail(reqBody *OrderDetailRequestData) (res ResponseBody, err error) {
-	res, err = gateway.requestToDana(reqBody, "", FUNCTION_QUERY_ORDER, QUERY_PATH)
+func (gateway *CoreGateway) OrderDetail(reqBody *OrderDetailRequestData, accessToken string) (res ResponseBody, err error) {
+	res, err = gateway.requestToDana(reqBody, accessToken, FUNCTION_QUERY_ORDER, QUERY_PATH)
 	if err != nil {
 		return
 	}
@@ -99,10 +99,10 @@ func (gateway *CoreGateway) ApplyAccessToken(reqBody *RequestApplyAccessToken) (
 	return
 }
 
-func (gateway *CoreGateway) Refund(reqBody *RefundRequestData) (res ResponseBody, err error) {
+func (gateway *CoreGateway) Refund(reqBody *RefundRequestData, accessToken string) (res ResponseBody, err error) {
 	reqBody.RefundAmount.Value = fmt.Sprintf("%v00", reqBody.RefundAmount.Value)
 
-	res, err = gateway.requestToDana(reqBody, "", FUNCTION_REFUND, REFUND_PATH)
+	res, err = gateway.requestToDana(reqBody, accessToken, FUNCTION_REFUND, REFUND_PATH)
 	if err != nil {
 		return
 	}
