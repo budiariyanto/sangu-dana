@@ -146,7 +146,10 @@ func (gateway *CoreGateway) requestToDana(reqBody interface{}, accessToken strin
 	head.ClientID = gateway.Client.ClientId
 	head.ReqTime = now.Format(DANA_TIME_LAYOUT)
 	head.ClientSecret = gateway.Client.ClientSecret
-	head.AccessToken = accessToken
+
+	if accessToken != "" {
+		head.AccessToken = accessToken
+	}
 
 	var id uuid.UUID
 	id, err = uuid.NewUUID()
